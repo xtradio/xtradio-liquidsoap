@@ -1,12 +1,10 @@
-FROM savonet/liquidsoap-full
+FROM savonet/liquidsoap-full:latest
 LABEL maintainer="XTRadio Ops <contact@xtradio.org>" \
       version="0.1" \
       description="XTRadio Liquidsoap docker image"
 
-RUN apt-get update -y
-RUN apt-get clean
+COPY radio.liq /etc/liquidsoap/radio.liq
 
-RUN useradd radio
-RUN su radio
+RUN liquidsoap --check /etc/liquidsoap/radio.liq
 
-CMD ["/usr/local/bin/liquidsoap", "/home/radio/radio.liq"]
+ENTRYPOINT [ "liquidsoap", "/etc/liquidsoap/radio.liq" ]

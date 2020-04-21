@@ -1,0 +1,173 @@
+<icecast>
+    <location>Europe</location>
+    <admin>webmaster@xtradio.org</admin>
+
+    <limits>
+        <clients>100</clients>
+        <sources>6</sources>
+        <threadpool>10</threadpool>
+        <queue-size>524288</queue-size>
+        <client-timeout>30</client-timeout>
+        <header-timeout>15</header-timeout>
+        <source-timeout>30</source-timeout>
+        <burst-on-connect>1</burst-on-connect>
+        <burst-size>131070</burst-size>
+    </limits>
+
+    <directory>
+        <yp-url-timeout>15</yp-url-timeout>
+        <yp-url>http://dir.xiph.org/cgi-bin/yp-cgi</yp-url>
+    </directory>
+
+    <authentication>
+        <source-password>test</source-password>
+        <fallback-mount-password>test</fallback-mount-password>
+
+        <admin-user>admin</admin-user>
+        <admin-password>test</admin-password>
+    </authentication>
+
+    <hostname>xtradio.org</hostname>
+    <server-id>XTRadio Germany</server-id>
+
+    <listen-socket>
+        <port>8080</port>
+    </listen-socket>
+
+    <mount>
+        <mount-name>/aac</mount-name>
+        <max-listeners>100</max-listeners>
+        <burst-size>65536</burst-size>
+        <hidden>0</hidden>
+        <no-yp>0</no-yp>
+        <genre>Various</genre>
+        <public>1</public>
+        <stream-name>XTRadio aac</stream-name>
+        <stream-description>32kbps Stereo AAC</stream-description>
+        <genre>Deep House, Electronic, Glitch Hop, Futurefunk, Ghettofunk, Futurebass, EDM</genre>
+        <bitrate>32</bitrate>
+        <stream-url>https://xtradio.org</stream-url>
+    </mount>
+    <mount>
+        <mount-name>/high.mp3</mount-name>
+        <max-listeners>100</max-listeners>
+        <burst-size>65536</burst-size>
+        <hidden>0</hidden>
+        <no-yp>0</no-yp>
+        <genre>Various</genre>
+        <public>1</public>
+        <stream-name>XTRadio high</stream-name>
+        <stream-description>320kbps Stereo MP3</stream-description>
+        <genre>Deep House, Electronic, Glitch Hop, Futurefunk, Ghettofunk, Futurebass, EDM</genre>
+        <bitrate>320</bitrate>
+        <stream-url>https://xtradio.org</stream-url>
+    </mount>
+    <mount>
+        <mount-name>/mid.mp3</mount-name>
+        <max-listeners>100</max-listeners>
+        <burst-size>65536</burst-size>
+        <hidden>0</hidden>
+        <no-yp>0</no-yp>
+        <genre>Various</genre>
+        <public>1</public>
+        <stream-name>XTRadio mid</stream-name>
+        <stream-description>192kbps Stereo MP3</stream-description>
+        <genre>Deep House, Electronic, Glitch Hop, Futurefunk, Ghettofunk, Futurebass, EDM</genre>
+        <bitrate>192</bitrate>
+        <stream-url>https://xtradio.org</stream-url>
+    </mount>
+    <mount>
+        <mount-name>/low.mp3</mount-name>
+        <max-listeners>100</max-listeners>
+        <burst-size>65536</burst-size>
+        <hidden>0</hidden>
+        <no-yp>0</no-yp>
+        <genre>Various</genre>
+        <public>1</public>
+        <stream-name>XTRadio low</stream-name>
+        <stream-description>128kbps Stereo MP3</stream-description>
+        <genre>Deep House, Electronic, Glitch Hop, Futurefunk, Ghettofunk, Futurebass, EDM</genre>
+        <bitrate>128</bitrate>
+        <stream-url>https://xtradio.org</stream-url>
+    </mount>
+
+<!-->Fallback mounts<-->
+
+    <mount>
+        <mount-name>/live</mount-name>
+        <max-listeners>100</max-listeners>
+        <burst-size>65536</burst-size>
+        <hidden>0</hidden>
+        <no-yp>0</no-yp>
+        <genre>Various</genre>
+        <public>1</public>
+        <stream-name>XTRadio Live</stream-name>
+        <stream-description>192kbps Stereo MP3</stream-description>
+        <genre>Deep House, Electronic, Glitch Hop, Futurefunk, Ghettofunk, Futurebass, EDM</genre>
+        <bitrate>192</bitrate>
+        <fallback-mount>/mid.mp3</fallback-mount>
+        <type>audio/mpeg</type>
+    </mount>
+    <mount>
+        <mount-name>/mp3</mount-name>
+        <max-listeners>100</max-listeners>
+        <burst-size>65536</burst-size>
+        <hidden>0</hidden>
+        <no-yp>0</no-yp>
+        <genre>Various</genre>
+        <public>1</public>
+        <stream-name>XTRadio MP3</stream-name>
+        <stream-description>128kbps Stereo MP3</stream-description>
+        <genre>Deep House, Electronic, Glitch Hop, Futurefunk, Ghettofunk, Futurebass, EDM</genre>
+        <bitrate>128</bitrate>
+        <fallback-mount>/low.mp3</fallback-mount>
+        <type>audio/mpeg</type>
+    </mount>
+
+    <fileserve>1</fileserve>
+
+    <paths>
+		<!-- basedir is only used if chroot is enabled -->
+        <basedir>/usr/share/icecast</basedir>
+
+        <!-- Note that if <chroot> is turned on below, these paths must both
+             be relative to the new root, not the original root -->
+        <logdir>/var/log/icecast</logdir>
+        <webroot>/usr/share/icecast/web</webroot>
+        <adminroot>/usr/share/icecast/admin</adminroot>
+        <alias source="/low" destination="/low.mp3"/>
+        <alias source="/high" destination="/high.mp3"/>
+        <alias source="/mid" destination="/mid.mp3"/>
+        <!-- <pidfile>/usr/share/icecast2/icecast.pid</pidfile> -->
+
+        <!-- Aliases: treat requests for 'source' path as being for 'dest' path
+             May be made specific to a port or bound address using the "port"
+             and "bind-address" attributes.
+          -->
+        <!--
+        <alias source="/foo" destination="/bar"/>
+          -->
+        <!-- Aliases: can also be used for simple redirections as well,
+             this example will redirect all requests for http://server:port/ to
+             the status page
+          -->
+        <alias source="/" destination="/status.xsl"/>
+    </paths>
+
+    <logging>
+        <accesslog>access.log</accesslog>
+        <errorlog>error.log</errorlog>
+      	<loglevel>3</loglevel> <!-- 4 Debug, 3 Info, 2 Warn, 1 Error -->
+      	<logsize>10000</logsize> <!-- Max size of a logfile -->
+    </logging>
+
+    <security>
+        <chroot>0</chroot>
+    </security>
+
+    <http-headers>
+        <header name="Access-Control-Allow-Origin" value="*" />
+        <header name="Access-Control-Allow-Headers" value="Origin, Accept, X-Requested-With, Content-Type, If-Modified-Since" />
+        <header name="Access-Control-Allow-Methods" value="GET, OPTIONS, HEAD" />
+    </http-headers>
+</icecast>
