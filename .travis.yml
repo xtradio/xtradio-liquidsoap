@@ -1,0 +1,23 @@
+services:
+- docker
+language: minimal
+env:
+  global:
+  - COMMIT=${TRAVIS_COMMIT::8}
+  - secure: jFhYE4uIK/02LLbLrfAdN34efNOJY1djJWz4tFDxTugVEGkQUtwwilDOokfP9ZSc9OM8mrdyaiMoDv8uxOYHPSAhOBKskNHPyS82iYh8ecjF5pG0LsRwwoSW9ai1P/b/+qqqlEOt3Lt6Kjh/t3DoF4zgB5D2GeHJPvg23G9Pd0tp8PUokbJr43h+qfGTQ0mtw/GUSFjU8dqIRoHBdajfwKezw+szb3zWZ7HljxLkZ/YLtZUZYFVsv9AsZ5aCbh7NXvn3lZJDqH+LL6laB+Qaqo+NF9JzWXiqM3IChveqBBfEVeOo6F0hcabBy+rnVUeUP+NM2wVFnW46QxpnD1DcNpkTundJmYXRzEwZroBfAm43F/0BX3kmaDxTyeOkgBIEAl6syviu16FXC4gHdEFuFSonMwJuNzZm9HcnvTdO+niDQJT9TFBoIO0X0bgIDuIQdOJsDb2ACMCuIFpVriCFNs61E6ESveP71p2QsS0Ftd7o712NJSmpod79RVrmJ2vfStPQUVr0bx6an/1NZS53+LGM74nJ+qs++IBBghnpq7aHGE7InT4hQLRvW9lmGNHCL9wB5m/a5yY4jRxdRhxMxMNyF7VcNkDdPYUrnFbvpULnEEB+1S8b+xc3mH6STo32J/Owm9iQSAIRnz40TRwXkJv/17Rvbpps4kvF/SLiFvM=
+  - secure: RXeH2MT/whNpHvnO0IS5Vhwc8mD5NWQhzUxMCpyBaKtQ/M7rr7rXea1CIEaiPfOyg5GGD/RufA8TYr3YkhF4nOe3m2ywUWvHqjzyOwAQ8S5kXlfMqR+hEziN1Pgz4sNu7VR1oRMhlZTVVKNFLKrp/dJ4uio/oxm1QhT59yt4TqsETYAGQ0ftv6NAyl5Qyd/qjaU+qptXG0JAkmTsnzgCkca37ulaXmqw9/bok96KPuz6AfnqP+6o6BYqbaJyi4xzz8ZdwBtkIeYoA6/XC9/5lXb1lFsBzY1g8Gvf7KuSuIFC4bzn32XohFFvpBjyYbOdQXFInweB5qqhnEvgui5uDKBa2nlK/n/vyVJYR5uFtUxFioYoXYTz8MF6hsX+Zq3HDGXhYCMpk+WvMnQXXWVRqIqajNYhKaegAvVScCS64O4ZocAM6CrpkNxU9M2V6dgIjDmU486Abrgw1XxCfWvvZKSNbIeEy4zSlrsEltJ6ek5xl8ntUHRqX2dFzO1lbdZUB3gCxlqME63ASeT4voY2u1Z/GKmAQHJV/4mZCzIELy7bc687ICF56pdSFhLJMKH19EcLUlMhBxUZg7ZtejEfB/uoGRFn8J/PsFrEP11Pde3lx27RJEw6gsXIf8++ET73jNdo1fR7HSs6yI4T7BI2+OfJjIwbSgyOGZmysG4klEs=
+notifications:
+  email: false
+  slack:
+    secure: wiWFrSYLOp/UGHFpemvQTwZ87WclsdriRbyDWYmCysH1kmtHikh9hSIHWmHdiot5giUwLe9KPKkEMRLnUfgNg47h4cLogPluL01c3mgXM4Vt1uH2ZIKEwh2ezzMJAgKWNV56zOcUEldWRtBYIQXVfVcpcjydeTnRdjSmE14d4cJOQWAb3ysBdCJ0u/iP3YPrLTC+64mXtFYqE4CytL6koPvVLd4Nz8tOaih7Egv0I1PbWGROnolOnyHtq8PHiDcixBqJ9sktaamq8ImLolnRMQCNW3mmCZGysEPdbHcoGIIfIxo0D1P4uDFlZqzCsI3eRC0Q0i3vZfF/ha+fBCTaU2mLnjd5a1ABvZpncljpjbrXR1hflwsFrSHai8wuH2WGt7QVwfsWe8D9RbdeP39lq6DM1QFMV3izmJ0t2c+54j5ksHcqCbH/3dWtI3DJIweNa/I9A6/2YNkccX27eVkXqW5zco8ULz7CB1SD6L+hzcJAng1U0T3i6ecclrIfhfDZn3eE+8ktX2mvX+o39UZjsOHwcFZcJ54nXr+sv6Qo06EXEhtWlOcg+BQGH6F3b+slpHpi9DjDP7vviIoAaMVNrfmXXKfFYjqQhX3bhQIwbXOmVsh7Try6pGOEVhZp09s8VJA3PVYdLtWgsVexNZRIZd5UDKbNPHa1TOR3Ejb2HmM=
+script:
+- export REPO=xtradio/liquidsoap
+- export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH;
+  fi`
+- docker build -f Dockerfile -t $REPO:$COMMIT .
+- docker tag $REPO:$COMMIT $REPO:$TAG
+- docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+after_success:
+- docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+- docker push $REPO:$TAG
+- docker push $REPO:$COMMIT
