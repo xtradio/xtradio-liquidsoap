@@ -13,7 +13,7 @@ services:
       - "8082:8082"
     volumes:
       - /home/akos/Music/xtradio/MUSIC:/MUSIC
-      - /home/akos/Dev/playlist-generate/playlist.txt:/playlist.txt
+      - .playlist.txt:/playlist.txt
         #links: 
         #- icecast
     environment: 
@@ -21,6 +21,7 @@ services:
       - ICECAST_HOST=localhost
       - ICECAST_PASSWORD=test
       - API_HOST=localhost:10000
+      - PLAYLIST_FILE=/playlist.txt
   icecast:
     image: luzifer/icecast2:latest
     container_name: icecast
