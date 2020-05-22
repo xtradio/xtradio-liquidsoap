@@ -8,6 +8,19 @@ set("server.telnet",true)
 set("server.telnet.bind_addr","0.0.0.0")
 set("init.allow_root", true)
 
+# Rewrite title to include link to songs (for IceCast direct users)
+def map( m )
+  if ( m["share"] != "" ) then
+    [ ("title", m["title"]^" / "^ m["share"]) ]
+  else
+    [ ("title", m["title"]) ]
+  end
+end
+
+# Read BPM
+def show_bpm(currentBpm) =
+  log(string_of(currentBpm))
+end
 # Stream Settings
 
 dj_password = getenv("DJ_PASSWORD")
@@ -27,16 +40,16 @@ dj = input.harbor("dj",port=8082,password=dj_password,id="dj")
 interval = random.float(min=3120.0,max=3130.0)
 timed_jingles=delay(interval,jingles)
 
-def send_meta(m) =
-ignore(http.get("http://" ^ api_host ^ "/post/song?file=" ^ url.encode(m["filename"]) ^ "&artist=" ^ url.encode(m["artist"]) ^ "&title=" ^ url.encode(m["title"]) ^ ""))
-#ignore(http.get("http://air.radiotime.com/Playing.ashx?partnerId=v9JFLEaB&partnerKey=0unVe3mWpxNq&id=s182867&title=" ^ url.encode(m["title"]) ^ "&artist=" ^ url.encode(m["artist"]) ^ "  > /dev/null 2>&1 "))
+def send_meta(m)
+  ignore(http.get("http://" ^ api_host ^ "/post/song?file=" ^ url.encode(m["filename"]) ^ "&artist=" ^ url.encode(m["artist"]) ^ "&title=" ^ url.encode(m["title"]) ^ "&share=" ^ url.encode(m["share"]) ^"&image=" ^ url.encode(m["image"]) ^"&length="^ url.encode(m["length"]) ))
 #  ignore(system("/var/www/MAIN/API/upcoming.sh > /dev/null 2>&1 "))
 #  ignore(system("ttytter -status=\"♪ #np: " ^ m["artist"] ^ " - " ^ m["title"] ^ " / Listen @ https://xtradio.org\" > /dev/null 2>&1"))
 # ignore(system("php /scripts/sendtweet.php artist=" ^ url.encode(m["artist"]) ^ " title=" ^ url.encode(m["title"]) ^ " filename=" ^ url.encode(m["filename"]) ^ " > /dev/null 2>&1"))
 end
 
+
 radio = backup
-#radio = random(weights = [1, 5], [delay(1.,jingles), radio])
+radio = random(weights = [1, 5], [delay(1.,jingles), radio])
 radio = fallback(track_sensitive=true, [request.queue(id="request"),radio])
 #radio = smart_crossfade(radio)
 # radio = smart_crossfade(start_next=10., fade_in=8., fade_out=10., high=-15.,medium=-32., margin=4., width=3., conservative=false, radio)
@@ -44,9 +57,11 @@ radio = nrj(radio)
 radio = mksafe(radio)
 radio = amplify(1.,override="replay_gain",radio)
 
+#radio = bpm(every=60., show_bpm , radio)
+
 radio = smooth_add(p=0.3, delay=0.5, special=timed_jingles, normal=radio)
 
-#radio = map_metadata(map, radio)
+radio = map_metadata(map, radio)
 
 def dj_title(m) =
   title = m["title"]
@@ -159,30 +174,3 @@ description="We Love MusiC! Do U?! - 32kbps/AAC/Stereo - https://XTRadio.ORG",ra
 #  smart_cross(width=width, duration=start_next, conservative=conservative,
 #              transition,s)
 #end
-
-def map( m )
-
-   # Get filename from file path
-   dollar = string.extract(pattern="([^/]*)\..*$_", m["filename"])
-   filename = dollar["1"]
-
-   # Construct stream metadata from available id3 tags
-  if ( m["title"] == "" ) then
-      [ ("artist", "New"), ("title", filename) ]
-   else
-      if ( m["album"] != "" ) then
-         if ( m["artist"] != "" ) then
-            if int_of_string( m["year"], default = 0 ) > 0 then
-               [ ("title", m["album"]^" ("^m["year"]^") - "^m["title"] ) ]
-            else
-               [ ("title", m["album"]^" - "^m["title"] ) ]
-            end
-         else
-            [ ("artist", "New"), ("title", m["album"]^" - "^m["title"] ) ]
-         end
-      else
-         [ ("title", m["title"] ) ]
-      end
-   end
-
-end
