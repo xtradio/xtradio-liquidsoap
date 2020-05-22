@@ -21,6 +21,12 @@ end
 def show_bpm(currentBpm) =
   log(string_of(currentBpm))
 end
+
+# Send details to the API
+def send_meta(m)
+  ignore(http.get("http://" ^ api_host ^ "/post/song?file=" ^ url.encode(m["filename"]) ^ "&artist=" ^ url.encode(m["artist"]) ^ "&title=" ^ url.encode(m["title"]) ^ "&share=" ^ url.encode(m["share"]) ^"&image=" ^ url.encode(m["image"]) ^"&length="^ url.encode(m["length"]) ))
+end
+
 # Stream Settings
 
 dj_password = getenv("DJ_PASSWORD")
@@ -40,14 +46,6 @@ dj = input.harbor("dj",port=8082,password=dj_password,id="dj")
 interval = random.float(min=3120.0,max=3130.0)
 timed_jingles=delay(interval,jingles)
 
-def send_meta(m)
-  ignore(http.get("http://" ^ api_host ^ "/post/song?file=" ^ url.encode(m["filename"]) ^ "&artist=" ^ url.encode(m["artist"]) ^ "&title=" ^ url.encode(m["title"]) ^ "&share=" ^ url.encode(m["share"]) ^"&image=" ^ url.encode(m["image"]) ^"&length="^ url.encode(m["length"]) ))
-#  ignore(system("/var/www/MAIN/API/upcoming.sh > /dev/null 2>&1 "))
-#  ignore(system("ttytter -status=\"♪ #np: " ^ m["artist"] ^ " - " ^ m["title"] ^ " / Listen @ https://xtradio.org\" > /dev/null 2>&1"))
-# ignore(system("php /scripts/sendtweet.php artist=" ^ url.encode(m["artist"]) ^ " title=" ^ url.encode(m["title"]) ^ " filename=" ^ url.encode(m["filename"]) ^ " > /dev/null 2>&1"))
-end
-
-
 radio = backup
 radio = random(weights = [1, 5], [delay(1.,jingles), radio])
 radio = fallback(track_sensitive=true, [request.queue(id="request"),radio])
@@ -61,14 +59,6 @@ radio = amplify(1.,override="replay_gain",radio)
 
 radio = smooth_add(p=0.3, delay=0.5, special=timed_jingles, normal=radio)
 
-radio = map_metadata(map, radio)
-
-def dj_title(m) =
-  title = m["title"]
-  [("title","#{title} / Live DJ")]
-end
-dj = map_metadata(dj_title, dj)
-
 #def podcast_meta(m)
 #  title = m["title"]
 #  [("title","#{title} / Podcast")]
@@ -76,10 +66,18 @@ dj = map_metadata(dj_title, dj)
 #podcast = map_metadata(podcast_meta, podcast)
 
 #radio = fallback(track_sensitive=false, [podcast,radio])
+
+# Handle live DJ Connection
+def dj_title(m) =
+  title = m["title"]
+  [("title","#{title} / Live DJ")]
+end
+dj = map_metadata(dj_title, dj)
 radio = fallback(track_sensitive=false, [dj,radio])
 
 radio = on_metadata(send_meta, radio)
 
+radio = map_metadata(map, radio)
 # Now output the stream to the local icecast server in mp3 and ogg format (Debian needed a recompile to allow vorbis and mp3 encoding)
 # {% for data in mountpoints %}
 # output.icecast(%{% if data.type == "audio/mpeg" %}mp3{% elif data.type == "audio/aac" %}fdkaac{%endif%}(bitrate={{ data.quality }}), host="icecast",port={{ icecast_port }},
