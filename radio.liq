@@ -22,11 +22,6 @@ def show_bpm(currentBpm) =
   log(string_of(currentBpm))
 end
 
-# Send details to the API
-def send_meta(m)
-  ignore(http.get("http://" ^ api_host ^ "/post/song?file=" ^ url.encode(m["filename"]) ^ "&artist=" ^ url.encode(m["artist"]) ^ "&title=" ^ url.encode(m["title"]) ^ "&share=" ^ url.encode(m["share"]) ^"&image=" ^ url.encode(m["image"]) ^"&length="^ url.encode(m["length"]) ))
-end
-
 # Stream Settings
 
 dj_password = getenv("DJ_PASSWORD")
@@ -34,6 +29,11 @@ icecast_host = getenv("ICECAST_HOST")
 icecast_password = getenv("ICECAST_PASSWORD")
 api_host = getenv("API_HOST")
 playlist_file = getenv("PLAYLIST_FILE")
+
+# Send details to the API
+def send_meta(m)
+  ignore(http.get("http://" ^ api_host ^ "/post/song?file=" ^ url.encode(m["filename"]) ^ "&artist=" ^ url.encode(m["artist"]) ^ "&title=" ^ url.encode(m["title"]) ^ "&share=" ^ url.encode(m["share"]) ^"&image=" ^ url.encode(m["image"]) ^"&length="^ url.encode(m["length"]) ))
+end
 
 backup = playlist(reload=1,reload_mode="rounds",mode="randomize",playlist_file)
 jingles = playlist(reload=1,reload_mode="rounds",mode="randomize","/MUSIC/JINGLES")
