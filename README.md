@@ -1,7 +1,8 @@
 # xtradio-liquidsoap
 XTRadio Liquidsoap configuration
 
-![Docker Build](https://img.shields.io/docker/cloud/build/xtradio/liquidsoap)
+[![Build Status](https://github.com/xtradio/xtradio-liquidsoap/workflows/build/badge.svg?branch=master)](https://github.com/xtradio/xtradio-liquidsoap/actions)
+
 
 ## Files
 
