@@ -1,4 +1,4 @@
-FROM savonet/liquidsoap:v1.4.3
+FROM savonet/liquidsoap:v2.0.2
 LABEL maintainer="XTRadio Ops <contact@xtradio.org>" \
       version="0.1" \
       description="XTRadio Liquidsoap docker image"

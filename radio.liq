@@ -57,7 +57,7 @@ radio = amplify(1.,override="replay_gain",radio)
 
 #radio = bpm(every=60., show_bpm , radio)
 
-radio = smooth_add(p=0.3, delay=0.5, special=timed_jingles, normal=radio)
+radio = smooth_add(p=0.3, special=timed_jingles, normal=radio)
 
 #def podcast_meta(m)
 #  title = m["title"]
@@ -75,7 +75,7 @@ end
 dj = map_metadata(dj_title, dj)
 radio = fallback(track_sensitive=false, [dj,radio])
 
-radio = on_metadata(send_meta, radio)
+source.on_metadata(radio, send_meta)
 
 radio = map_metadata(map, radio)
 # Now output the stream to the local icecast server in mp3 and ogg format (Debian needed a recompile to allow vorbis and mp3 encoding)
