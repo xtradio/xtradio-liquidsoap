@@ -16,11 +16,6 @@ def map( m )
   end
 end
 
-# Read BPM
-def show_bpm(currentBpm) =
-  log(string_of(currentBpm))
-end
-
 # Stream Settings
 
 dj_password = environment.get("DJ_PASSWORD")
@@ -53,8 +48,6 @@ radio = fallback(track_sensitive=true, [request.queue(id="request"),radio])
 radio = nrj(radio)
 radio = mksafe(radio)
 radio = amplify(1.,override="replay_gain",radio)
-
-#radio = bpm(every=60., show_bpm , radio)
 
 radio = smooth_add(p=0.3, special=timed_jingles, normal=radio)
 
