@@ -2,10 +2,10 @@
 
 # Standard settings
 # settings.log.file.path = "/tmp/radio.log"
-settings.log.stdout = true
-settings.server.telnet = true
-settings.server.telnet.bind_addr = "0.0.0.0"
-settings.init.allow_root = true
+settings.log.stdout := true
+settings.server.telnet := true
+settings.server.telnet.bind_addr := "0.0.0.0"
+settings.init.allow_root := true
 
 # Rewrite title to include link to songs (for IceCast direct users)
 def map( m )
