@@ -1,12 +1,11 @@
 #!/usr/local/bin/liquidsoap
 
 # Standard settings
-# set("log.file.path","/tmp/radio.log")
-set("log.stdout",true)
-# set("log.file",true)
-set("server.telnet",true)
-set("server.telnet.bind_addr","0.0.0.0")
-set("init.allow_root", true)
+# settings.log.file.path = "/tmp/radio.log"
+settings.log.stdout = true
+settings.server.telnet = true
+settings.server.telnet.bind_addr = "0.0.0.0"
+settings.init.allow_root = true
 
 # Rewrite title to include link to songs (for IceCast direct users)
 def map( m )
@@ -24,11 +23,11 @@ end
 
 # Stream Settings
 
-dj_password = getenv("DJ_PASSWORD")
-icecast_host = getenv("ICECAST_HOST")
-icecast_password = getenv("ICECAST_PASSWORD")
-api_host = getenv("API_HOST")
-playlist_file = getenv("PLAYLIST_FILE")
+dj_password = environment.get("DJ_PASSWORD")
+icecast_host = environment.get("ICECAST_HOST")
+icecast_password = environment.get("ICECAST_PASSWORD")
+api_host = environment.get("API_HOST")
+playlist_file = environment.get("PLAYLIST_FILE")
 
 # Send details to the API
 def send_meta(m)
@@ -63,7 +62,7 @@ radio = smooth_add(p=0.3, special=timed_jingles, normal=radio)
 #  title = m["title"]
 #  [("title","#{title} / Podcast")]
 #end
-#podcast = map_metadata(podcast_meta, podcast)
+#podcast = metadata.map(podcast_meta, podcast)
 
 #radio = fallback(track_sensitive=false, [podcast,radio])
 
@@ -72,12 +71,12 @@ def dj_title(m) =
   title = m["title"]
   [("title","#{title} / Live DJ")]
 end
-dj = map_metadata(dj_title, dj)
+dj = metadata.map(dj_title, dj)
 radio = fallback(track_sensitive=false, [dj,radio])
 
-source.on_metadata(radio, send_meta)
+radio = source.on_metadata(radio, send_meta)
 
-radio = map_metadata(map, radio)
+radio = metadata.map(map, radio)
 # Now output the stream to the local icecast server in mp3 and ogg format (Debian needed a recompile to allow vorbis and mp3 encoding)
 # {% for data in mountpoints %}
 # output.icecast(%{% if data.type == "audio/mpeg" %}mp3{% elif data.type == "audio/aac" %}fdkaac{%endif%}(bitrate={{ data.quality }}), host="icecast",port={{ icecast_port }},
