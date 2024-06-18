@@ -2,7 +2,7 @@ FROM savonet/liquidsoap:v2.2.5
 COPY radio.liq /etc/liquidsoap/radio.liq
 RUN liquidsoap --check /etc/liquidsoap/radio.liq
 
-FROM savonet/liquidsoap:v2.2.5-minimal
+FROM savonet/liquidsoap:v2.2.5
 LABEL org.xtradio.maintainer="XTRadio Ops <contact@xtradio.org>" \
       org.xtradio.liquidsoap.version="v2.2.5" \
       org.xtradio.description="XTRadio Liquidsoap docker image"
